@@ -3,9 +3,9 @@ package com.lordkleiton.desafiomobills.model
 import java.math.BigDecimal
 import java.util.*
 
-data class Despesa(
-    val valor: BigDecimal = BigDecimal(0),
-    val descricao: String = "",
-    val data: Date = Date(),
+class Despesa(
+    valor: BigDecimal = BigDecimal(0),
+    descricao: String = "",
+    data: Date = Date(),
     val pago: Boolean = false
-)
+) : BaseData(valor, descricao, data)

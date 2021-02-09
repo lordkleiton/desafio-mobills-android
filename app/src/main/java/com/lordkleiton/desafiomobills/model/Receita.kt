@@ -3,9 +3,9 @@ package com.lordkleiton.desafiomobills.model
 import java.math.BigDecimal
 import java.util.*
 
-data class Receita(
-    val valor: BigDecimal = BigDecimal(0),
-    val descricao: String = "",
-    val data: Date = Date(),
+class Receita(
+    valor: BigDecimal = BigDecimal(0),
+    descricao: String = "",
+    data: Date = Date(),
     val recebido: Boolean = false
-)
+) : BaseData(valor, descricao, data)
