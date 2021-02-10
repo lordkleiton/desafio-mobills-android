@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Desafio Mobills</string>
+    <string name="continue_login_Text">Faça login para continuar</string>
+    <string name="error_login">Ocorreu um problema ao fazer login</string>
 </resources>
