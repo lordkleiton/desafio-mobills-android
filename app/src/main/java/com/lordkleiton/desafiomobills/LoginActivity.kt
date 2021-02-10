@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -11,16 +12,23 @@ import com.google.android.gms.common.api.ApiException
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.lordkleiton.desafiomobills.databinding.ActivityMainBinding
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.lordkleiton.desafiomobills.databinding.ActivityLoginBinding
+import com.lordkleiton.desafiomobills.model.Despesa
+import com.lordkleiton.desafiomobills.util.AppConst.LOGIN_REQUEST_CODE
+import com.lordkleiton.desafiomobills.viewmodel.ExpensesViewModel
 
-class MainActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityLoginBinding
     private lateinit var googleSignInClient: GoogleSignInClient
+    private val db = Firebase.firestore
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
         val root = binding.root
         setContentView(root)
 
@@ -36,17 +44,23 @@ class MainActivity : AppCompatActivity() {
         binding.activityMainButton.setOnClickListener {
             signIn()
         }
+
+        val vm = ViewModelProvider(this).get(ExpensesViewModel::class.java)
+
+        vm.save(Despesa()).observe(this, {
+            Log.i("hmm", it.toString())
+        })
     }
 
     private fun signIn() {
         val signInIntent = googleSignInClient.signInIntent
-        startActivityForResult(signInIntent, 10)
+        startActivityForResult(signInIntent, LOGIN_REQUEST_CODE)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode == 10) {
+        if (requestCode == LOGIN_REQUEST_CODE) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)!!
@@ -69,7 +83,9 @@ class MainActivity : AppCompatActivity() {
                     val user = auth.currentUser
 
                     if (user != null) {
-                        Log.i("hmm", user.displayName ?: "")
+                        val view = binding.root
+
+                        Snackbar.make(view, user.displayName ?: "", Snackbar.LENGTH_SHORT).show()
                     }
 
                 } else {

@@ -1,10 +1,11 @@
 package com.lordkleiton.desafiomobills.model
 
-import java.math.BigDecimal
-import java.util.*
+import com.google.firebase.Timestamp
 
 open class BaseData(
-    val valor: BigDecimal = BigDecimal(0),
-    val descricao: String = "",
-    val data: Date = Date(),
-)
+    val valor: Long,
+    val descricao: String,
+    val data: Timestamp,
+) {
+    open fun toJson() = mapOf("valor" to valor, "descricao" to descricao, "data" to data)
+}
