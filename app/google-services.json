@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "928510658786-c5ohsh06j7di5jir4b63eerukugjbq6h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lordkleiton.desafiomobills",
+            "certificate_hash": "dea1b6292c116a21c15802f0f553099e21b323b4"
+          }
+        },
+        {
           "client_id": "928510658786-ou1gpr5im8vjmqc9dd712evhg8gg5cd7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
