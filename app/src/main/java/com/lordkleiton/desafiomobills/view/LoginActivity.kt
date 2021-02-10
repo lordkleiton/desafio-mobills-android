@@ -1,4 +1,4 @@
-package com.lordkleiton.desafiomobills
+package com.lordkleiton.desafiomobills.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,9 +9,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.lordkleiton.desafiomobills.R
 import com.lordkleiton.desafiomobills.databinding.ActivityLoginBinding
 import com.lordkleiton.desafiomobills.util.AppConst.LOGIN_REQUEST_CODE
 import com.lordkleiton.desafiomobills.util.AppConst.TAG
@@ -122,9 +122,9 @@ class LoginActivity : AppCompatActivity() {
                     auth.currentUser?.apply {
                         Log.d(TAG, "userName: $displayName")
 
-                        Snackbar.make(binding.root, displayName ?: "", Snackbar.LENGTH_SHORT).show()
-
                         changeLoading(View.INVISIBLE)
+
+                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                     }
                 } else {
                     onError(task.exception!!)

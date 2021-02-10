@@ -2,4 +2,7 @@
     <string name="app_name">Desafio Mobills</string>
     <string name="continue_login_Text">Faça login para continuar</string>
     <string name="error_login">Ocorreu um problema ao fazer login</string>
+    <string name="title_incomes">Receitas</string>
+    <string name="title_expenses">Despesas</string>
+    <string name="title_home">Início</string>
 </resources>
