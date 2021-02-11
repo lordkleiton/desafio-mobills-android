@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lordkleiton.desafiomobills.R
 import com.lordkleiton.desafiomobills.model.Receita
+import com.lordkleiton.desafiomobills.util.toCurrency
+import java.text.SimpleDateFormat
 
 class IncomesListAdapter :
     ListAdapter<Receita, IncomesListAdapter.ReceitaViewHolder>(ReceitaViewHolder) {
@@ -43,9 +45,16 @@ class IncomesListAdapter :
 
         fun bind(data: Receita) {
             data.apply {
-                value.text = valor.toString()
-                description.text = descricao
-                date.text = data.toString()
+                val max = 30
+                val auxDate = SimpleDateFormat.getDateInstance().format(this.data.toDate())
+                val auxDesc = when (descricao.length) {
+                    in 0..max -> descricao
+                    else -> "${descricao.substring(0, max)}..."
+                }
+
+                value.text = (valor / 100).toCurrency()
+                description.text = auxDesc
+                date.text = auxDate
                 pending.text = recebido.toString()
             }
         }
