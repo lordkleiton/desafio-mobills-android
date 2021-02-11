@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -28,7 +29,7 @@ class IncomesListAdapter :
         return ReceitaViewHolder(view)
     }
 
-    class ReceitaViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ReceitaViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         private val value: TextView
         private val description: TextView
         private val date: TextView
@@ -51,11 +52,24 @@ class IncomesListAdapter :
                     in 0..max -> descricao
                     else -> "${descricao.substring(0, max)}..."
                 }
+                val color = when (recebido) {
+                    false -> R.color.design_default_color_error
+                    else -> android.R.color.holo_green_dark
+                }
+                val auxText = when (recebido) {
+                    false -> R.string.item_default_pending
+                    else -> R.string.item_received
+                }
 
                 value.text = (valor / 100).toCurrency()
                 description.text = auxDesc
                 date.text = auxDate
-                pending.text = recebido.toString()
+                pending.apply {
+                    setTextColor(ContextCompat.getColor(view.context, color))
+
+                    text = resources.getText(auxText)
+
+                }
             }
         }
 
