@@ -29,12 +29,6 @@ class LoginActivity : AppCompatActivity() {
         setupAuth()
 
         setupButton()
-
-//        val vm = ViewModelProvider(this).get(ExpensesViewModel::class.java)
-//
-//        vm.save(Despesa()).observe(this, {
-//            Log.i("hmm", it.toString())
-//        })
     }
 
     private fun setupAuth() {
