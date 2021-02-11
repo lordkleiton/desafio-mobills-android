@@ -24,13 +24,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupNavigation() {
         binding.bottomNavigation.setOnNavigationItemSelectedListener {
-            val fragment = when (it.itemId) {
-                R.id.menu_item_home -> HomeFragment()
-                R.id.menu_item_income -> IncomesFragment()
-                else -> ExpensesFragment()
-            }
+            val current = binding.bottomNavigation.selectedItemId
 
-            switchFragments(fragment)
+            if (current != it.itemId) {
+                val fragment = when (it.itemId) {
+                    R.id.menu_item_home -> HomeFragment()
+                    R.id.menu_item_income -> IncomesFragment()
+                    else -> ExpensesFragment()
+                }
+
+                switchFragments(fragment)
+            }
 
             true
         }
