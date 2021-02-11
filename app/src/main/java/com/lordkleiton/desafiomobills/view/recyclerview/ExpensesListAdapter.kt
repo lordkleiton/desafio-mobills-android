@@ -9,28 +9,28 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lordkleiton.desafiomobills.R
-import com.lordkleiton.desafiomobills.model.Receita
+import com.lordkleiton.desafiomobills.model.Despesa
 import com.lordkleiton.desafiomobills.util.AppConst.DESCRIPTION_MAX
 import com.lordkleiton.desafiomobills.util.toCurrency
 import java.text.SimpleDateFormat
 
-class IncomesListAdapter :
-    ListAdapter<Receita, IncomesListAdapter.ReceitaViewHolder>(ReceitaViewHolder) {
+class ExpensesListAdapter :
+    ListAdapter<Despesa, ExpensesListAdapter.DespesaViewHolder>(DespesaViewHolder) {
 
-    override fun onBindViewHolder(holder: ReceitaViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: DespesaViewHolder, position: Int) {
         val item = currentList[position]
 
         return holder.bind(item)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReceitaViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DespesaViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.list_generic_item, parent, false)
 
-        return ReceitaViewHolder(view)
+        return DespesaViewHolder(view)
     }
 
-    class ReceitaViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+    class DespesaViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
         private val value: TextView
         private val description: TextView
         private val date: TextView
@@ -45,7 +45,7 @@ class IncomesListAdapter :
             }
         }
 
-        fun bind(data: Receita) {
+        fun bind(data: Despesa) {
             data.apply {
                 val max = DESCRIPTION_MAX
                 val auxDate = SimpleDateFormat.getDateInstance().format(this.data.toDate())
@@ -53,13 +53,13 @@ class IncomesListAdapter :
                     in 0..max -> descricao
                     else -> "${descricao.substring(0, max)}..."
                 }
-                val color = when (recebido) {
+                val color = when (pago) {
                     false -> R.color.design_default_color_error
                     else -> android.R.color.holo_green_dark
                 }
-                val auxText = when (recebido) {
+                val auxText = when (pago) {
                     false -> R.string.item_default_pending
-                    else -> R.string.item_received
+                    else -> R.string.item_paid
                 }
 
                 value.text = (valor / 100).toCurrency()
@@ -73,14 +73,14 @@ class IncomesListAdapter :
             }
         }
 
-        companion object : DiffUtil.ItemCallback<Receita>() {
-            override fun areContentsTheSame(oldItem: Receita, newItem: Receita): Boolean {
+        companion object : DiffUtil.ItemCallback<Despesa>() {
+            override fun areContentsTheSame(oldItem: Despesa, newItem: Despesa): Boolean {
                 return oldItem.run {
-                    recebido == newItem.recebido && valor == newItem.valor && data == newItem.data && descricao == newItem.descricao
+                    pago == newItem.pago && valor == newItem.valor && data == newItem.data && descricao == newItem.descricao
                 }
             }
 
-            override fun areItemsTheSame(oldItem: Receita, newItem: Receita): Boolean {
+            override fun areItemsTheSame(oldItem: Despesa, newItem: Despesa): Boolean {
                 return oldItem == newItem
             }
         }
