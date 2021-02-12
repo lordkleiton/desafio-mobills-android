@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lordkleiton.desafiomobills.R
 import com.lordkleiton.desafiomobills.model.Receita
 import com.lordkleiton.desafiomobills.util.AppConst.DESCRIPTION_MAX
+import com.lordkleiton.desafiomobills.util.byHundred
 import com.lordkleiton.desafiomobills.util.toCurrency
 import com.lordkleiton.desafiomobills.view.recyclerview.listener.IncomesActionListener
 import java.text.SimpleDateFormat
@@ -81,7 +82,7 @@ class IncomesListAdapter(private val listener: IncomesActionListener) :
                     else -> R.string.item_received
                 }
 
-                value.text = (valor / 100).toCurrency()
+                value.text = valor.byHundred().toCurrency()
                 description.text = auxDesc
                 date.text = auxDate
                 pending.apply {
