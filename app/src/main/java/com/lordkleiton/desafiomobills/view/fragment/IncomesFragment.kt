@@ -1,6 +1,6 @@
 package com.lordkleiton.desafiomobills.view.fragment
 
-import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -14,9 +14,10 @@ import com.lordkleiton.desafiomobills.util.AppConst
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_BOOL
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_DESC
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_VALUE
-import com.lordkleiton.desafiomobills.util.AppConst.RESULT_INCOME
+import com.lordkleiton.desafiomobills.util.AppConst.MODE_NEW
 import com.lordkleiton.desafiomobills.view.FormActivity
 import com.lordkleiton.desafiomobills.view.recyclerview.IncomesListAdapter
+import com.lordkleiton.desafiomobills.view.recyclerview.listener.IncomesActionListener
 import com.lordkleiton.desafiomobills.viewmodel.IncomesViewModel
 
 class IncomesFragment : Fragment(R.layout.fragment_incomes) {
@@ -32,7 +33,7 @@ class IncomesFragment : Fragment(R.layout.fragment_incomes) {
 
         setupAdapter()
 
-        setupObserver()
+        setupVM()
 
         setupRv()
 
@@ -40,12 +41,22 @@ class IncomesFragment : Fragment(R.layout.fragment_incomes) {
     }
 
     private fun setupAdapter() {
-        adapter = IncomesListAdapter()
+        adapter = IncomesListAdapter(object : IncomesActionListener {
+            override fun onDelete(id: String) {
+                vm.delete(id).observe(viewLifecycleOwner, {
+                    adapter.submitList(it.toList())
+                })
+            }
+
+            override fun onEdit(current: Pair<String, Receita>) {
+                customStart(AppConst.MODE_EDIT, current)
+            }
+        })
 
         binding.incomesRv.adapter = adapter
     }
 
-    private fun setupObserver() {
+    private fun setupVM() {
         vm = ViewModelProvider(this).get(IncomesViewModel::class.java)
 
         vm.find().observe(viewLifecycleOwner, {
@@ -69,26 +80,45 @@ class IncomesFragment : Fragment(R.layout.fragment_incomes) {
 
     private fun setupFab() {
         binding.incomesFab.setOnClickListener {
-            val intent = Intent(activity, FormActivity::class.java).apply {
-                putExtra(AppConst.EXTRA_MODE, RESULT_INCOME)
-            }
-
-            startActivityForResult(intent, RESULT_INCOME)
+            customStart(MODE_NEW)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK && requestCode == RESULT_INCOME && data != null) {
+        if (resultCode == RESULT_OK && data != null) {
             val value = data.getLongExtra(EXTRA_VALUE, -1L)
             val desc = data.getStringExtra(EXTRA_DESC)!!
             val bool = data.getBooleanExtra(EXTRA_BOOL, false)
+            val id = data.getStringExtra(AppConst.EXTRA_ID) ?: ""
             val income = Receita(value, desc, recebido = bool)
+            val liveData = when (requestCode) {
+                MODE_NEW -> vm.save(income)
+                else -> vm.update(id, income)
+            }
 
-            vm.save(income).observe(viewLifecycleOwner, {
+            liveData.observe(viewLifecycleOwner, {
                 adapter.submitList(it.toList())
             })
         }
 
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun customStart(mode: Int, data: Pair<String, Receita>? = null) {
+        val intent = Intent(activity, FormActivity::class.java).apply {
+            putExtra(AppConst.CURRENT_MODE, mode)
+
+            data?.apply {
+                putExtra(AppConst.EXTRA_ID, first)
+
+                second.apply {
+                    putExtra(EXTRA_VALUE, valor)
+                    putExtra(EXTRA_DESC, descricao)
+                    putExtra(EXTRA_BOOL, recebido)
+                }
+            }
+        }
+
+        startActivityForResult(intent, mode)
     }
 }

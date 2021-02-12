@@ -37,4 +37,28 @@ class ExpensesViewModel : ViewModel() {
 
         return expenses
     }
+
+    fun delete(id: String): LiveData<Map<String, Despesa>> {
+        repository.delete(id).addOnCompleteListener {
+            val aux = expenses.value?.toMutableMap() ?: mutableMapOf()
+
+            aux.remove(id)
+
+            expenses.value = aux
+        }
+
+        return expenses
+    }
+
+    fun update(id: String, data: Despesa): LiveData<Map<String, Despesa>> {
+        repository.update(id, data).addOnSuccessListener {
+            val aux = expenses.value?.toMutableMap() ?: mutableMapOf()
+
+            aux[id] = data
+
+            expenses.value = aux
+        }
+
+        return expenses
+    }
 }

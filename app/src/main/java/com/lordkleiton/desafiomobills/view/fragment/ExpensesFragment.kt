@@ -10,13 +10,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.lordkleiton.desafiomobills.R
 import com.lordkleiton.desafiomobills.databinding.FragmentExpensesBinding
 import com.lordkleiton.desafiomobills.model.Despesa
+import com.lordkleiton.desafiomobills.util.AppConst.CURRENT_MODE
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_BOOL
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_DESC
-import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_MODE
+import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_ID
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_VALUE
-import com.lordkleiton.desafiomobills.util.AppConst.RESULT_EXPENSE
+import com.lordkleiton.desafiomobills.util.AppConst.MODE_EDIT
+import com.lordkleiton.desafiomobills.util.AppConst.MODE_NEW
 import com.lordkleiton.desafiomobills.view.FormActivity
 import com.lordkleiton.desafiomobills.view.recyclerview.ExpensesListAdapter
+import com.lordkleiton.desafiomobills.view.recyclerview.listener.ExpenseActionListener
 import com.lordkleiton.desafiomobills.viewmodel.ExpensesViewModel
 
 class ExpensesFragment : Fragment(R.layout.fragment_expenses) {
@@ -30,7 +33,7 @@ class ExpensesFragment : Fragment(R.layout.fragment_expenses) {
 
         setupAdapter()
 
-        setupObserver()
+        setupVM()
 
         setupRv()
 
@@ -38,12 +41,22 @@ class ExpensesFragment : Fragment(R.layout.fragment_expenses) {
     }
 
     private fun setupAdapter() {
-        adapter = ExpensesListAdapter()
+        adapter = ExpensesListAdapter(object : ExpenseActionListener {
+            override fun onDelete(id: String) {
+                vm.delete(id).observe(viewLifecycleOwner, {
+                    adapter.submitList(it.toList())
+                })
+            }
+
+            override fun onEdit(current: Pair<String, Despesa>) {
+                customStart(MODE_EDIT, current)
+            }
+        })
 
         binding.expensesRv.adapter = adapter
     }
 
-    private fun setupObserver() {
+    private fun setupVM() {
         vm = ViewModelProvider(this).get(ExpensesViewModel::class.java)
 
         vm.find().observe(viewLifecycleOwner, {
@@ -67,26 +80,45 @@ class ExpensesFragment : Fragment(R.layout.fragment_expenses) {
 
     private fun setupFab() {
         binding.expensesFab.setOnClickListener {
-            val intent = Intent(activity, FormActivity::class.java).apply {
-                putExtra(EXTRA_MODE, RESULT_EXPENSE)
-            }
-
-            startActivityForResult(intent, RESULT_EXPENSE)
+            customStart(MODE_NEW)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == RESULT_OK && requestCode == RESULT_EXPENSE && data != null) {
+        if (resultCode == RESULT_OK && data != null) {
             val value = data.getLongExtra(EXTRA_VALUE, -1L)
             val desc = data.getStringExtra(EXTRA_DESC)!!
             val bool = data.getBooleanExtra(EXTRA_BOOL, false)
+            val id = data.getStringExtra(EXTRA_ID) ?: ""
             val expense = Despesa(value, desc, pago = bool)
+            val liveData = when (requestCode) {
+                MODE_NEW -> vm.save(expense)
+                else -> vm.update(id, expense)
+            }
 
-            vm.save(expense).observe(viewLifecycleOwner, {
+            liveData.observe(viewLifecycleOwner, {
                 adapter.submitList(it.toList())
             })
         }
 
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun customStart(mode: Int, data: Pair<String, Despesa>? = null) {
+        val intent = Intent(activity, FormActivity::class.java).apply {
+            putExtra(CURRENT_MODE, mode)
+
+            data?.apply {
+                putExtra(EXTRA_ID, first)
+
+                second.apply {
+                    putExtra(EXTRA_VALUE, valor)
+                    putExtra(EXTRA_DESC, descricao)
+                    putExtra(EXTRA_BOOL, pago)
+                }
+            }
+        }
+
+        startActivityForResult(intent, mode)
     }
 }

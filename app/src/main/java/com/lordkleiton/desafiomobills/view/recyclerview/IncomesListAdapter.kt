@@ -3,6 +3,7 @@ package com.lordkleiton.desafiomobills.view.recyclerview
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
@@ -12,9 +13,10 @@ import com.lordkleiton.desafiomobills.R
 import com.lordkleiton.desafiomobills.model.Receita
 import com.lordkleiton.desafiomobills.util.AppConst.DESCRIPTION_MAX
 import com.lordkleiton.desafiomobills.util.toCurrency
+import com.lordkleiton.desafiomobills.view.recyclerview.listener.IncomesActionListener
 import java.text.SimpleDateFormat
 
-class IncomesListAdapter :
+class IncomesListAdapter(private val listener: IncomesActionListener) :
     ListAdapter<Pair<String, Receita>, IncomesListAdapter.ReceitaViewHolder>(ReceitaViewHolder) {
 
     override fun onBindViewHolder(holder: ReceitaViewHolder, position: Int) {
@@ -27,14 +29,19 @@ class IncomesListAdapter :
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.list_generic_item, parent, false)
 
-        return ReceitaViewHolder(view)
+        return ReceitaViewHolder(view, listener)
     }
 
-    class ReceitaViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+    class ReceitaViewHolder(private val view: View, listener: IncomesActionListener) :
+        RecyclerView.ViewHolder(view) {
         private val value: TextView
         private val description: TextView
         private val date: TextView
         private val pending: TextView
+        private val edit: ImageButton
+        private val delete: ImageButton
+
+        private lateinit var income: Pair<String, Receita>
 
         init {
             view.apply {
@@ -42,10 +49,22 @@ class IncomesListAdapter :
                 description = findViewById(R.id.list_item_description)
                 date = findViewById(R.id.list_item_date)
                 pending = findViewById(R.id.list_item_pending)
+                edit = findViewById(R.id.list_item_edit)
+                delete = findViewById(R.id.list_item_delete)
+
+                edit.setOnClickListener {
+                    listener.onEdit(income)
+                }
+
+                delete.setOnClickListener {
+                    listener.onDelete(income.first)
+                }
             }
         }
 
         fun bind(data: Pair<String, Receita>) {
+            income = data
+
             data.second.apply {
                 val max = DESCRIPTION_MAX
                 val auxDate = SimpleDateFormat.getDateInstance().format(this.data.toDate())
