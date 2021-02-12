@@ -23,7 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:hint="@string/text_valor"
-        app:layout_constraintTop_toBottomOf="@id/form_title">
+        app:layout_constraintTop_toBottomOf="@id/form_title"
+        app:prefixText="R$">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -49,20 +50,27 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/field_date"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/field_date_wrapper"
         android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_margin="10dp"
+        android:theme="@style/Theme.MaterialComponents"
+        app:layout_constraintTop_toBottomOf="@id/field_desc" />
+
+    <TextView
+        android:id="@+id/field_date"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:hint="@string/text_date"
-        app:layout_constraintTop_toBottomOf="@id/field_desc">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLength="50" />
-
-    </com.google.android.material.textfield.TextInputLayout>
+        android:elevation="1dp"
+        android:text="@string/text_date"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/field_date_wrapper"
+        app:layout_constraintEnd_toEndOf="@id/field_date_wrapper"
+        app:layout_constraintStart_toStartOf="@id/field_date_wrapper"
+        app:layout_constraintTop_toTopOf="@id/field_date_wrapper" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/field_select"
@@ -70,7 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/field_date" />
+        app:layout_constraintTop_toBottomOf="@id/field_date_wrapper" />
 
     <TextView
         android:id="@+id/field_select_text"

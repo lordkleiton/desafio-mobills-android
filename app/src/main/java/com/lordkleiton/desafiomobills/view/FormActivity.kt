@@ -1,5 +1,7 @@
 package com.lordkleiton.desafiomobills.view
 
+import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -14,15 +16,21 @@ import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_BOOL
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_DESC
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_ID
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_MODE_NEW
+import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_TIMESTAMP
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_VALUE
 import com.lordkleiton.desafiomobills.util.AppConst.MODE_EDIT
 import com.lordkleiton.desafiomobills.util.AppConst.MODE_NEW
+import com.lordkleiton.desafiomobills.util.formatDate
+import java.time.LocalDate
+import java.time.ZoneId
+import java.util.*
 
 class FormActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFormBinding
     private var mode = -1
     private val errorMsg = "Campo obrigatório"
     private var id = ""
+    private var date = Date()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +50,7 @@ class FormActivity : AppCompatActivity() {
         setupViews()
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun setupViews() {
         val type = intent.getStringExtra(CURRENT_TYPE)!!
         val title = when (mode) {
@@ -61,16 +70,35 @@ class FormActivity : AppCompatActivity() {
 
         binding.formTitle.text = resources.getText(title)
         binding.fieldSelectText.text = resources.getText(toggleLabel)
+
+        binding.fieldDateWrapper.setOnClickListener {
+
+            val picker = DatePickerDialog(this)
+
+            picker.setOnDateSetListener { _, year, month, dayOfMonth ->
+                val newDate = LocalDate.of(year, month + 1, dayOfMonth)
+                date = Date.from(newDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+
+                binding.fieldDate.text = date.formatDate()
+            }
+
+            picker.show()
+        }
     }
 
     private fun fillForm() {
-        val value = intent.getLongExtra(EXTRA_VALUE, -1L)
+        val value = intent.getLongExtra(EXTRA_VALUE, -1)
         val desc = intent.getStringExtra(EXTRA_DESC)!!
         val bool = intent.getBooleanExtra(EXTRA_BOOL, false)
+        val time = intent.getLongExtra(EXTRA_TIMESTAMP, 1)
+        val auxDate = Date(time)
+
+        date = auxDate
 
         binding.fieldValue.editText!!.setText((value / 100).toString())
         binding.fieldDesc.editText!!.setText(desc)
         binding.fieldSelect.isChecked = bool
+        binding.fieldDate.text = date.formatDate()
 
         id = intent.getStringExtra(EXTRA_ID)!!
     }
@@ -115,6 +143,7 @@ class FormActivity : AppCompatActivity() {
                     putExtra(EXTRA_BOOL, bool)
                     putExtra(EXTRA_MODE_NEW, mode)
                     putExtra(EXTRA_ID, id)
+                    putExtra(EXTRA_TIMESTAMP, date.time)
                 }
 
                 setResult(RESULT_OK, intent)

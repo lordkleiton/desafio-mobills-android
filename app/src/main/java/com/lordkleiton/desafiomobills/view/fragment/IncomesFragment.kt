@@ -7,6 +7,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.Timestamp
 import com.lordkleiton.desafiomobills.R
 import com.lordkleiton.desafiomobills.databinding.FragmentIncomesBinding
 import com.lordkleiton.desafiomobills.model.Receita
@@ -17,12 +18,14 @@ import com.lordkleiton.desafiomobills.util.AppConst.CURRENT_TYPE_INCOMES
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_BOOL
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_DESC
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_ID
+import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_TIMESTAMP
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_VALUE
 import com.lordkleiton.desafiomobills.util.AppConst.MODE_NEW
 import com.lordkleiton.desafiomobills.view.FormActivity
 import com.lordkleiton.desafiomobills.view.recyclerview.IncomesListAdapter
 import com.lordkleiton.desafiomobills.view.recyclerview.listener.IncomesActionListener
 import com.lordkleiton.desafiomobills.viewmodel.IncomesViewModel
+import java.util.*
 
 class IncomesFragment : Fragment(R.layout.fragment_incomes) {
     private lateinit var binding: FragmentIncomesBinding
@@ -92,7 +95,8 @@ class IncomesFragment : Fragment(R.layout.fragment_incomes) {
             val desc = data.getStringExtra(EXTRA_DESC)!!
             val bool = data.getBooleanExtra(EXTRA_BOOL, false)
             val id = data.getStringExtra(EXTRA_ID) ?: ""
-            val income = Receita(value, desc, recebido = bool)
+            val date = data.getLongExtra(EXTRA_TIMESTAMP, 1)
+            val income = Receita(value, desc, Timestamp(Date(date)), bool)
             val liveData = when (requestCode) {
                 MODE_NEW -> vm.save(income)
                 else -> vm.update(id, income)
@@ -118,6 +122,7 @@ class IncomesFragment : Fragment(R.layout.fragment_incomes) {
                     putExtra(EXTRA_VALUE, valor)
                     putExtra(EXTRA_DESC, descricao)
                     putExtra(EXTRA_BOOL, recebido)
+                    putExtra(EXTRA_TIMESTAMP, this.data.toDate().time)
                 }
             }
         }

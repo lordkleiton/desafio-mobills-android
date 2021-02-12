@@ -17,5 +17,5 @@
     <string name="new_income">Nova receita</string>
     <string name="edit_expense">Editar despesa</string>
     <string name="edit_income">Editar receita</string>
-    <string name="text_date">Data</string>
+    <string name="text_date">Selecionar data</string>
 </resources>

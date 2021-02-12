@@ -11,6 +11,7 @@ object AppConst {
     const val EXTRA_DESC = "extra_desc"
     const val EXTRA_BOOL = "extra_bool"
     const val EXTRA_ID = "extra_id"
+    const val EXTRA_TIMESTAMP = "extra_timestamp"
 
     const val MODE_EDIT = 0
     const val MODE_NEW = 1

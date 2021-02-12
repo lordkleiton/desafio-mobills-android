@@ -13,9 +13,9 @@ import com.lordkleiton.desafiomobills.R
 import com.lordkleiton.desafiomobills.model.Receita
 import com.lordkleiton.desafiomobills.util.AppConst.DESCRIPTION_MAX
 import com.lordkleiton.desafiomobills.util.byHundred
+import com.lordkleiton.desafiomobills.util.formatDate
 import com.lordkleiton.desafiomobills.util.toCurrency
 import com.lordkleiton.desafiomobills.view.recyclerview.listener.IncomesActionListener
-import java.text.SimpleDateFormat
 
 class IncomesListAdapter(private val listener: IncomesActionListener) :
     ListAdapter<Pair<String, Receita>, IncomesListAdapter.ReceitaViewHolder>(ReceitaViewHolder) {
@@ -68,7 +68,7 @@ class IncomesListAdapter(private val listener: IncomesActionListener) :
 
             data.second.apply {
                 val max = DESCRIPTION_MAX
-                val auxDate = SimpleDateFormat.getDateInstance().format(this.data.toDate())
+                val auxDate = this.data.toDate().formatDate()
                 val auxDesc = when (descricao.length) {
                     in 0..max -> descricao
                     else -> "${descricao.substring(0, max)}..."

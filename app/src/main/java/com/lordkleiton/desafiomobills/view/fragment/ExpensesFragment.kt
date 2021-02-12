@@ -7,6 +7,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.Timestamp
 import com.lordkleiton.desafiomobills.R
 import com.lordkleiton.desafiomobills.databinding.FragmentExpensesBinding
 import com.lordkleiton.desafiomobills.model.Despesa
@@ -16,6 +17,7 @@ import com.lordkleiton.desafiomobills.util.AppConst.CURRENT_TYPE_EXPENSES
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_BOOL
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_DESC
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_ID
+import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_TIMESTAMP
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_VALUE
 import com.lordkleiton.desafiomobills.util.AppConst.MODE_EDIT
 import com.lordkleiton.desafiomobills.util.AppConst.MODE_NEW
@@ -23,6 +25,7 @@ import com.lordkleiton.desafiomobills.view.FormActivity
 import com.lordkleiton.desafiomobills.view.recyclerview.ExpensesListAdapter
 import com.lordkleiton.desafiomobills.view.recyclerview.listener.ExpenseActionListener
 import com.lordkleiton.desafiomobills.viewmodel.ExpensesViewModel
+import java.util.*
 
 class ExpensesFragment : Fragment(R.layout.fragment_expenses) {
     private lateinit var binding: FragmentExpensesBinding
@@ -92,7 +95,8 @@ class ExpensesFragment : Fragment(R.layout.fragment_expenses) {
             val desc = data.getStringExtra(EXTRA_DESC)!!
             val bool = data.getBooleanExtra(EXTRA_BOOL, false)
             val id = data.getStringExtra(EXTRA_ID) ?: ""
-            val expense = Despesa(value, desc, pago = bool)
+            val date = data.getLongExtra(EXTRA_TIMESTAMP, 1)
+            val expense = Despesa(value, desc, Timestamp(Date(date)), bool)
             val liveData = when (requestCode) {
                 MODE_NEW -> vm.save(expense)
                 else -> vm.update(id, expense)
@@ -118,6 +122,7 @@ class ExpensesFragment : Fragment(R.layout.fragment_expenses) {
                     putExtra(EXTRA_VALUE, valor)
                     putExtra(EXTRA_DESC, descricao)
                     putExtra(EXTRA_BOOL, pago)
+                    putExtra(EXTRA_TIMESTAMP, this.data.toDate().time)
                 }
             }
         }
