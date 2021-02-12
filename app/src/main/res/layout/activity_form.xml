@@ -49,12 +49,38 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/field_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:hint="@string/text_date"
+        app:layout_constraintTop_toBottomOf="@id/field_desc">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLength="50" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/field_select"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/field_desc" />
+        app:layout_constraintTop_toBottomOf="@id/field_date" />
+
+    <TextView
+        android:id="@+id/field_select_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="@string/item_received"
+        app:layout_constraintBottom_toBottomOf="@id/field_select"
+        app:layout_constraintStart_toEndOf="@+id/field_select"
+        app:layout_constraintTop_toTopOf="@id/field_select" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/ok_fab"

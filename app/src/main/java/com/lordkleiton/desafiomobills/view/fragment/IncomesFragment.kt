@@ -11,8 +11,12 @@ import com.lordkleiton.desafiomobills.R
 import com.lordkleiton.desafiomobills.databinding.FragmentIncomesBinding
 import com.lordkleiton.desafiomobills.model.Receita
 import com.lordkleiton.desafiomobills.util.AppConst
+import com.lordkleiton.desafiomobills.util.AppConst.CURRENT_MODE
+import com.lordkleiton.desafiomobills.util.AppConst.CURRENT_TYPE
+import com.lordkleiton.desafiomobills.util.AppConst.CURRENT_TYPE_INCOMES
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_BOOL
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_DESC
+import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_ID
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_VALUE
 import com.lordkleiton.desafiomobills.util.AppConst.MODE_NEW
 import com.lordkleiton.desafiomobills.view.FormActivity
@@ -28,8 +32,6 @@ class IncomesFragment : Fragment(R.layout.fragment_incomes) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentIncomesBinding.bind(view)
-
-        setupAdapter()
 
         setupAdapter()
 
@@ -89,7 +91,7 @@ class IncomesFragment : Fragment(R.layout.fragment_incomes) {
             val value = data.getLongExtra(EXTRA_VALUE, -1L)
             val desc = data.getStringExtra(EXTRA_DESC)!!
             val bool = data.getBooleanExtra(EXTRA_BOOL, false)
-            val id = data.getStringExtra(AppConst.EXTRA_ID) ?: ""
+            val id = data.getStringExtra(EXTRA_ID) ?: ""
             val income = Receita(value, desc, recebido = bool)
             val liveData = when (requestCode) {
                 MODE_NEW -> vm.save(income)
@@ -106,10 +108,11 @@ class IncomesFragment : Fragment(R.layout.fragment_incomes) {
 
     private fun customStart(mode: Int, data: Pair<String, Receita>? = null) {
         val intent = Intent(activity, FormActivity::class.java).apply {
-            putExtra(AppConst.CURRENT_MODE, mode)
+            putExtra(CURRENT_MODE, mode)
+            putExtra(CURRENT_TYPE, CURRENT_TYPE_INCOMES)
 
             data?.apply {
-                putExtra(AppConst.EXTRA_ID, first)
+                putExtra(EXTRA_ID, first)
 
                 second.apply {
                     putExtra(EXTRA_VALUE, valor)

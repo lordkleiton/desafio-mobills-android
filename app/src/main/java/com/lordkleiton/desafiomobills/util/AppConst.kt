@@ -6,7 +6,6 @@ object AppConst {
     const val COLLECTION_EXPENSES = "despesas"
     const val TAG = "lord"
     const val DESCRIPTION_MAX = 30
-    const val RESULT_INCOME = 1
     const val EXTRA_MODE_NEW = "extra_mode_new"
     const val EXTRA_VALUE = "extra_value"
     const val EXTRA_DESC = "extra_desc"
@@ -17,4 +16,8 @@ object AppConst {
     const val MODE_NEW = 1
 
     const val CURRENT_MODE = "current_mode"
+
+    const val CURRENT_TYPE = "current_type"
+    const val CURRENT_TYPE_EXPENSES = "current_type_expenses"
+    const val CURRENT_TYPE_INCOMES = "current_type_incomes"
 }

@@ -11,6 +11,8 @@ import com.lordkleiton.desafiomobills.R
 import com.lordkleiton.desafiomobills.databinding.FragmentExpensesBinding
 import com.lordkleiton.desafiomobills.model.Despesa
 import com.lordkleiton.desafiomobills.util.AppConst.CURRENT_MODE
+import com.lordkleiton.desafiomobills.util.AppConst.CURRENT_TYPE
+import com.lordkleiton.desafiomobills.util.AppConst.CURRENT_TYPE_EXPENSES
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_BOOL
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_DESC
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_ID
@@ -107,6 +109,7 @@ class ExpensesFragment : Fragment(R.layout.fragment_expenses) {
     private fun customStart(mode: Int, data: Pair<String, Despesa>? = null) {
         val intent = Intent(activity, FormActivity::class.java).apply {
             putExtra(CURRENT_MODE, mode)
+            putExtra(CURRENT_TYPE, CURRENT_TYPE_EXPENSES)
 
             data?.apply {
                 putExtra(EXTRA_ID, first)

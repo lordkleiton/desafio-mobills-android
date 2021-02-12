@@ -15,4 +15,7 @@
     <string name="text_desc">Descrição</string>
     <string name="new_expense">Nova despesa</string>
     <string name="new_income">Nova receita</string>
+    <string name="edit_expense">Editar despesa</string>
+    <string name="edit_income">Editar receita</string>
+    <string name="text_date">Data</string>
 </resources>

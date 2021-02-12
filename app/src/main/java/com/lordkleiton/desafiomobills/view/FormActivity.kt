@@ -3,17 +3,20 @@ package com.lordkleiton.desafiomobills.view
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import android.util.Log
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import com.lordkleiton.desafiomobills.R
 import com.lordkleiton.desafiomobills.databinding.ActivityFormBinding
 import com.lordkleiton.desafiomobills.util.AppConst.CURRENT_MODE
+import com.lordkleiton.desafiomobills.util.AppConst.CURRENT_TYPE
+import com.lordkleiton.desafiomobills.util.AppConst.CURRENT_TYPE_EXPENSES
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_BOOL
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_DESC
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_ID
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_MODE_NEW
 import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_VALUE
 import com.lordkleiton.desafiomobills.util.AppConst.MODE_EDIT
+import com.lordkleiton.desafiomobills.util.AppConst.MODE_NEW
 
 class FormActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFormBinding
@@ -34,9 +37,30 @@ class FormActivity : AppCompatActivity() {
     private fun setupMode() {
         mode = intent.getIntExtra(CURRENT_MODE, -1)
 
-        Log.i("hmm", mode.toString())
-
         if (mode == MODE_EDIT) fillForm()
+
+        setupViews()
+    }
+
+    private fun setupViews() {
+        val type = intent.getStringExtra(CURRENT_TYPE)!!
+        val title = when (mode) {
+            MODE_NEW -> when (type) {
+                CURRENT_TYPE_EXPENSES -> R.string.new_expense
+                else -> R.string.new_income
+            }
+            else -> when (type) {
+                CURRENT_TYPE_EXPENSES -> R.string.edit_expense
+                else -> R.string.edit_income
+            }
+        }
+        val toggleLabel = when (type) {
+            CURRENT_TYPE_EXPENSES -> R.string.item_paid
+            else -> R.string.item_received
+        }
+
+        binding.formTitle.text = resources.getText(title)
+        binding.fieldSelectText.text = resources.getText(toggleLabel)
     }
 
     private fun fillForm() {
