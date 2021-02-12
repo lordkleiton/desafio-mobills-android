@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.lordkleiton.desafiomobills.R
 import com.lordkleiton.desafiomobills.databinding.FragmentExpensesBinding
 import com.lordkleiton.desafiomobills.model.Despesa
@@ -31,6 +32,8 @@ class ExpensesFragment : Fragment(R.layout.fragment_expenses) {
 
         setupObserver()
 
+        setupRv()
+
         setupFab()
     }
 
@@ -45,6 +48,20 @@ class ExpensesFragment : Fragment(R.layout.fragment_expenses) {
 
         vm.find().observe(viewLifecycleOwner, {
             adapter.submitList(it)
+        })
+    }
+
+    private fun setupRv() {
+        binding.expensesRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                if (recyclerView.scrollState == RecyclerView.SCROLL_STATE_SETTLING) {
+                    if (dy > 0) binding.expensesFab.hide()
+
+                    if (dy < 0) binding.expensesFab.show()
+                }
+            }
         })
     }
 

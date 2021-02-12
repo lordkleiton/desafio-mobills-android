@@ -6,10 +6,15 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.lordkleiton.desafiomobills.R
 import com.lordkleiton.desafiomobills.databinding.FragmentIncomesBinding
 import com.lordkleiton.desafiomobills.model.Receita
 import com.lordkleiton.desafiomobills.util.AppConst
+import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_BOOL
+import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_DESC
+import com.lordkleiton.desafiomobills.util.AppConst.EXTRA_VALUE
+import com.lordkleiton.desafiomobills.util.AppConst.RESULT_INCOME
 import com.lordkleiton.desafiomobills.view.FormActivity
 import com.lordkleiton.desafiomobills.view.recyclerview.IncomesListAdapter
 import com.lordkleiton.desafiomobills.viewmodel.IncomesViewModel
@@ -29,6 +34,8 @@ class IncomesFragment : Fragment(R.layout.fragment_incomes) {
 
         setupObserver()
 
+        setupRv()
+
         setupFab()
     }
 
@@ -46,21 +53,35 @@ class IncomesFragment : Fragment(R.layout.fragment_incomes) {
         })
     }
 
+    private fun setupRv() {
+        binding.incomesRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                if (recyclerView.scrollState == RecyclerView.SCROLL_STATE_SETTLING) {
+                    if (dy > 0) binding.incomesFab.hide()
+
+                    if (dy < 0) binding.incomesFab.show()
+                }
+            }
+        })
+    }
+
     private fun setupFab() {
         binding.incomesFab.setOnClickListener {
             val intent = Intent(activity, FormActivity::class.java).apply {
-                putExtra(AppConst.EXTRA_MODE, AppConst.RESULT_EXPENSE)
+                putExtra(AppConst.EXTRA_MODE, RESULT_INCOME)
             }
 
-            startActivityForResult(intent, AppConst.RESULT_EXPENSE)
+            startActivityForResult(intent, RESULT_INCOME)
         }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK && requestCode == AppConst.RESULT_EXPENSE && data != null) {
-            val value = data.getLongExtra(AppConst.EXTRA_VALUE, -1L)
-            val desc = data.getStringExtra(AppConst.EXTRA_DESC)!!
-            val bool = data.getBooleanExtra(AppConst.EXTRA_BOOL, false)
+        if (resultCode == Activity.RESULT_OK && requestCode == RESULT_INCOME && data != null) {
+            val value = data.getLongExtra(EXTRA_VALUE, -1L)
+            val desc = data.getStringExtra(EXTRA_DESC)!!
+            val bool = data.getBooleanExtra(EXTRA_BOOL, false)
             val income = Receita(value, desc, recebido = bool)
 
             vm.save(income).observe(viewLifecycleOwner, {
