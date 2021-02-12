@@ -4,7 +4,7 @@ object AppConst {
     const val LOGIN_REQUEST_CODE = 0
     const val COLLECTION_INCOMES = "receitas"
     const val COLLECTION_EXPENSES = "despesas"
-    const val TAG = "lord"
+    const val TAG = "lord_log"
     const val DESCRIPTION_MAX = 30
     const val EXTRA_MODE_NEW = "extra_mode_new"
     const val EXTRA_VALUE = "extra_value"
@@ -21,4 +21,6 @@ object AppConst {
     const val CURRENT_TYPE = "current_type"
     const val CURRENT_TYPE_EXPENSES = "current_type_expenses"
     const val CURRENT_TYPE_INCOMES = "current_type_incomes"
+
+    const val FIELD_USER_ID = "userId"
 }

@@ -8,5 +8,6 @@ class Despesa(
     valor: Long = 0,
     descricao: String = "",
     data: Timestamp = Timestamp(Date()),
+    userId: String = "",
     val pago: Boolean = false
-) : BaseData(valor, descricao, data), Serializable
+) : BaseData(valor, descricao, data, userId)

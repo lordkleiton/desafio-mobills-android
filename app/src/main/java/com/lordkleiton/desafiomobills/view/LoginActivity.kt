@@ -9,8 +9,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.lordkleiton.desafiomobills.R
 import com.lordkleiton.desafiomobills.databinding.ActivityLoginBinding
 import com.lordkleiton.desafiomobills.util.AppConst.LOGIN_REQUEST_CODE
@@ -18,7 +19,7 @@ import com.lordkleiton.desafiomobills.util.AppConst.TAG
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var auth: FirebaseAuth
+    private val auth = Firebase.auth
     private lateinit var client: GoogleSignInClient
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,8 +37,6 @@ class LoginActivity : AppCompatActivity() {
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
-
-        auth = FirebaseAuth.getInstance()
 
         client = GoogleSignIn.getClient(this, gso)
     }
@@ -114,7 +113,7 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     auth.currentUser?.apply {
-                        Log.d(TAG, "userName: $displayName")
+                        Log.d(TAG, "userName: $displayName, id: $uid")
 
                         changeLoading(View.INVISIBLE)
 

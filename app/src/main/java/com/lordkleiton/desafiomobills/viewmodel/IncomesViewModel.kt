@@ -3,13 +3,16 @@ package com.lordkleiton.desafiomobills.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 import com.lordkleiton.desafiomobills.model.Receita
 import com.lordkleiton.desafiomobills.repository.IncomesRepository
 
 class IncomesViewModel : ViewModel() {
     private val repository = IncomesRepository()
     private val incomes: MutableLiveData<Map<String, Receita>> = MutableLiveData()
+    private val userId = Firebase.auth.currentUser!!.uid
 
     fun find(): LiveData<Map<String, Receita>> {
         repository.find().addOnSuccessListener { data ->
@@ -27,10 +30,12 @@ class IncomesViewModel : ViewModel() {
     }
 
     fun save(data: Receita): LiveData<Map<String, Receita>> {
-        repository.save(data).addOnSuccessListener {
+        val newData = Receita(data.valor, data.descricao, data.data, userId, data.recebido)
+
+        repository.save(newData).addOnSuccessListener {
             val aux = incomes.value?.toMutableMap() ?: mutableMapOf()
 
-            aux[it.id] = data
+            aux[it.id] = newData
 
             incomes.value = aux
         }
@@ -51,10 +56,12 @@ class IncomesViewModel : ViewModel() {
     }
 
     fun update(id: String, data: Receita): LiveData<Map<String, Receita>> {
-        repository.update(id, data).addOnSuccessListener {
+        val newData = Receita(data.valor, data.descricao, data.data, userId, data.recebido)
+
+        repository.update(id, newData).addOnSuccessListener {
             val aux = incomes.value?.toMutableMap() ?: mutableMapOf()
 
-            aux[id] = data
+            aux[id] = newData
 
             incomes.value = aux
         }

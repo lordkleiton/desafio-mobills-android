@@ -18,4 +18,5 @@
     <string name="edit_expense">Editar despesa</string>
     <string name="edit_income">Editar receita</string>
     <string name="text_date">Selecionar data</string>
+    <string name="text_welcome">Seja bem vindo</string>
 </resources>

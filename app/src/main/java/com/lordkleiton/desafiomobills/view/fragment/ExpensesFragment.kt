@@ -96,7 +96,7 @@ class ExpensesFragment : Fragment(R.layout.fragment_expenses) {
             val bool = data.getBooleanExtra(EXTRA_BOOL, false)
             val id = data.getStringExtra(EXTRA_ID) ?: ""
             val date = data.getLongExtra(EXTRA_TIMESTAMP, 1)
-            val expense = Despesa(value, desc, Timestamp(Date(date)), bool)
+            val expense = Despesa(value, desc, Timestamp(Date(date)), "", bool)
             val liveData = when (requestCode) {
                 MODE_NEW -> vm.save(expense)
                 else -> vm.update(id, expense)

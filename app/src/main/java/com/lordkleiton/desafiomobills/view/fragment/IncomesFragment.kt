@@ -96,7 +96,7 @@ class IncomesFragment : Fragment(R.layout.fragment_incomes) {
             val bool = data.getBooleanExtra(EXTRA_BOOL, false)
             val id = data.getStringExtra(EXTRA_ID) ?: ""
             val date = data.getLongExtra(EXTRA_TIMESTAMP, 1)
-            val income = Receita(value, desc, Timestamp(Date(date)), bool)
+            val income = Receita(value, desc, Timestamp(Date(date)), "", bool)
             val liveData = when (requestCode) {
                 MODE_NEW -> vm.save(income)
                 else -> vm.update(id, income)
