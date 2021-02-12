@@ -49,7 +49,7 @@ class IncomesFragment : Fragment(R.layout.fragment_incomes) {
         vm = ViewModelProvider(this).get(IncomesViewModel::class.java)
 
         vm.find().observe(viewLifecycleOwner, {
-            adapter.submitList(it)
+            adapter.submitList(it.toList())
         })
     }
 
@@ -85,7 +85,7 @@ class IncomesFragment : Fragment(R.layout.fragment_incomes) {
             val income = Receita(value, desc, recebido = bool)
 
             vm.save(income).observe(viewLifecycleOwner, {
-                adapter.submitList(it)
+                adapter.submitList(it.toList())
             })
         }
 

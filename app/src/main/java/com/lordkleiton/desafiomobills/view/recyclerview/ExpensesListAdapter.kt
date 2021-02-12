@@ -15,7 +15,7 @@ import com.lordkleiton.desafiomobills.util.toCurrency
 import java.text.SimpleDateFormat
 
 class ExpensesListAdapter :
-    ListAdapter<Despesa, ExpensesListAdapter.DespesaViewHolder>(DespesaViewHolder) {
+    ListAdapter<Pair<String, Despesa>, ExpensesListAdapter.DespesaViewHolder>(DespesaViewHolder) {
 
     override fun onBindViewHolder(holder: DespesaViewHolder, position: Int) {
         val item = currentList[position]
@@ -45,8 +45,8 @@ class ExpensesListAdapter :
             }
         }
 
-        fun bind(data: Despesa) {
-            data.apply {
+        fun bind(data: Pair<String, Despesa>) {
+            data.second.apply {
                 val max = DESCRIPTION_MAX
                 val auxDate = SimpleDateFormat.getDateInstance().format(this.data.toDate())
                 val auxDesc = when (descricao.length) {
@@ -73,14 +73,18 @@ class ExpensesListAdapter :
             }
         }
 
-        companion object : DiffUtil.ItemCallback<Despesa>() {
-            override fun areContentsTheSame(oldItem: Despesa, newItem: Despesa): Boolean {
-                return oldItem.run {
-                    pago == newItem.pago && valor == newItem.valor && data == newItem.data && descricao == newItem.descricao
-                }
+        companion object : DiffUtil.ItemCallback<Pair<String, Despesa>>() {
+            override fun areContentsTheSame(
+                oldItem: Pair<String, Despesa>,
+                newItem: Pair<String, Despesa>
+            ): Boolean {
+                return oldItem == newItem
             }
 
-            override fun areItemsTheSame(oldItem: Despesa, newItem: Despesa): Boolean {
+            override fun areItemsTheSame(
+                oldItem: Pair<String, Despesa>,
+                newItem: Pair<String, Despesa>
+            ): Boolean {
                 return oldItem == newItem
             }
         }

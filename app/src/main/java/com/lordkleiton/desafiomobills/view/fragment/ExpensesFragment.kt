@@ -47,7 +47,7 @@ class ExpensesFragment : Fragment(R.layout.fragment_expenses) {
         vm = ViewModelProvider(this).get(ExpensesViewModel::class.java)
 
         vm.find().observe(viewLifecycleOwner, {
-            adapter.submitList(it)
+            adapter.submitList(it.toList())
         })
     }
 
@@ -83,7 +83,7 @@ class ExpensesFragment : Fragment(R.layout.fragment_expenses) {
             val expense = Despesa(value, desc, pago = bool)
 
             vm.save(expense).observe(viewLifecycleOwner, {
-                adapter.submitList(it)
+                adapter.submitList(it.toList())
             })
         }
 

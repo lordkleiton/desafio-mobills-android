@@ -9,11 +9,16 @@ import com.lordkleiton.desafiomobills.repository.IncomesRepository
 
 class IncomesViewModel : ViewModel() {
     private val repository = IncomesRepository()
-    private val incomes: MutableLiveData<List<Receita>> = MutableLiveData()
+    private val incomes: MutableLiveData<Map<String, Receita>> = MutableLiveData()
 
-    fun find(): LiveData<List<Receita>> {
+    fun find(): LiveData<Map<String, Receita>> {
         repository.find().addOnSuccessListener { data ->
-            val aux = data.documents.filterNotNull().map { it.toObject<Receita>()!! }
+            val safeList = data.documents.filterNotNull().map { it.id to it.toObject<Receita>()!! }
+            val aux = mutableMapOf<String, Receita>()
+
+            safeList.forEach {
+                aux[it.first] = it.second
+            }
 
             incomes.value = aux
         }
@@ -21,11 +26,13 @@ class IncomesViewModel : ViewModel() {
         return incomes
     }
 
-    fun save(data: Receita): LiveData<List<Receita>> {
+    fun save(data: Receita): LiveData<Map<String, Receita>> {
         repository.save(data).addOnSuccessListener {
-            val aux = (incomes.value ?: listOf()).toMutableList().apply { add(data) }
+            val aux = incomes.value?.toMutableMap() ?: mutableMapOf()
 
-            incomes.value = aux.toList()
+            aux[it.id] = data
+
+            incomes.value = aux
         }
 
         return incomes

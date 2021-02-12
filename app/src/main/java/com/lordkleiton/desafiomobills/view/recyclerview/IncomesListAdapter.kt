@@ -15,7 +15,7 @@ import com.lordkleiton.desafiomobills.util.toCurrency
 import java.text.SimpleDateFormat
 
 class IncomesListAdapter :
-    ListAdapter<Receita, IncomesListAdapter.ReceitaViewHolder>(ReceitaViewHolder) {
+    ListAdapter<Pair<String, Receita>, IncomesListAdapter.ReceitaViewHolder>(ReceitaViewHolder) {
 
     override fun onBindViewHolder(holder: ReceitaViewHolder, position: Int) {
         val item = currentList[position]
@@ -45,8 +45,8 @@ class IncomesListAdapter :
             }
         }
 
-        fun bind(data: Receita) {
-            data.apply {
+        fun bind(data: Pair<String, Receita>) {
+            data.second.apply {
                 val max = DESCRIPTION_MAX
                 val auxDate = SimpleDateFormat.getDateInstance().format(this.data.toDate())
                 val auxDesc = when (descricao.length) {
@@ -73,14 +73,18 @@ class IncomesListAdapter :
             }
         }
 
-        companion object : DiffUtil.ItemCallback<Receita>() {
-            override fun areContentsTheSame(oldItem: Receita, newItem: Receita): Boolean {
-                return oldItem.run {
-                    recebido == newItem.recebido && valor == newItem.valor && data == newItem.data && descricao == newItem.descricao
-                }
+        companion object : DiffUtil.ItemCallback<Pair<String, Receita>>() {
+            override fun areContentsTheSame(
+                oldItem: Pair<String, Receita>,
+                newItem: Pair<String, Receita>
+            ): Boolean {
+                return oldItem == newItem
             }
 
-            override fun areItemsTheSame(oldItem: Receita, newItem: Receita): Boolean {
+            override fun areItemsTheSame(
+                oldItem: Pair<String, Receita>,
+                newItem: Pair<String, Receita>
+            ): Boolean {
                 return oldItem == newItem
             }
         }
