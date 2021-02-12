@@ -1,6 +1,7 @@
 package com.lordkleiton.desafiomobills.model
 
 import com.google.firebase.Timestamp
+import java.io.Serializable
 import java.util.*
 
 class Despesa(
@@ -8,4 +9,4 @@ class Despesa(
     descricao: String = "",
     data: Timestamp = Timestamp(Date()),
     val pago: Boolean = false
-) : BaseData(valor, descricao, data)
+) : BaseData(valor, descricao, data), Serializable

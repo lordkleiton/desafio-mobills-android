@@ -1,6 +1,7 @@
 package com.lordkleiton.desafiomobills.model
 
 import com.google.firebase.Timestamp
+import java.io.Serializable
 import java.util.*
 
 class Receita(
@@ -8,4 +9,4 @@ class Receita(
     descricao: String = "",
     data: Timestamp = Timestamp(Date()),
     val recebido: Boolean = false,
-) : BaseData(valor, descricao, data)
+) : BaseData(valor, descricao, data), Serializable

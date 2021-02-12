@@ -11,4 +11,8 @@
     <string name="item_default_pending">Pendente</string>
     <string name="item_paid">Pago</string>
     <string name="item_received">Recebido</string>
+    <string name="text_valor">Valor</string>
+    <string name="text_desc">Descrição</string>
+    <string name="new_expense">Nova despesa</string>
+    <string name="new_income">Nova receita</string>
 </resources>
