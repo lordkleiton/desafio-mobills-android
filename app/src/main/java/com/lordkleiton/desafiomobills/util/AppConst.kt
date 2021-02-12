@@ -23,4 +23,6 @@ object AppConst {
     const val CURRENT_TYPE_INCOMES = "current_type_incomes"
 
     const val FIELD_USER_ID = "userId"
+
+    const val PLACEHOLDER = "|"
 }

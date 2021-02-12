@@ -1,60 +1,148 @@
 package com.lordkleiton.desafiomobills.view.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.lordkleiton.desafiomobills.R
+import com.lordkleiton.desafiomobills.databinding.FragmentHomeBinding
+import com.lordkleiton.desafiomobills.model.Despesa
+import com.lordkleiton.desafiomobills.model.Receita
+import com.lordkleiton.desafiomobills.util.AppConst.PLACEHOLDER
+import com.lordkleiton.desafiomobills.util.byHundred
+import com.lordkleiton.desafiomobills.util.toCurrency
+import com.lordkleiton.desafiomobills.viewmodel.ExpensesViewModel
+import com.lordkleiton.desafiomobills.viewmodel.IncomesViewModel
+import java.time.ZoneId
+import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+class HomeFragment : Fragment(R.layout.fragment_home) {
+    private lateinit var binding: FragmentHomeBinding
+    private val userName = Firebase.auth.currentUser!!.displayName!!
+    private var hour = 0
+    private lateinit var vmIncomes: IncomesViewModel
+    private lateinit var vmExpenses: ExpensesViewModel
 
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class HomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var expensesVisible = false
+    private var incomesVisible = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    private lateinit var incomes: List<Receita>
+    private lateinit var expenses: List<Despesa>
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentHomeBinding.bind(view)
+
+        setupVM()
+
+        setupHour()
+
+        setupViews()
+
+        observe()
+    }
+
+    private fun observe() {
+        vmIncomes.find().observe(viewLifecycleOwner, {
+            incomes = it.toList().map { el -> el.second }
+
+            setupIncomesCard()
+        })
+
+        vmExpenses.find().observe(viewLifecycleOwner, {
+            expenses = it.toList().map { el -> el.second }
+
+            setupExpensesCard()
+        })
+    }
+
+    private fun setupExpensesCard() {
+        expensesVisible = true
+
+        binding.expenseCard.visibility = View.VISIBLE
+
+        binding.expenseCardTitle.text = resources.getText(R.string.qty_expenses).toString().replace(
+            PLACEHOLDER, expenses.size.toString()
+        )
+        binding.expenseCardPending.text =
+            resources.getText(R.string.card_pending).toString().replace(
+                PLACEHOLDER, expenses.filter { !it.pago }.size.toString()
+            )
+        binding.expenseCardNotPending.text =
+            resources.getText(R.string.card_received).toString().replace(
+                PLACEHOLDER, expenses.filter { it.pago }.size.toString()
+            )
+
+        setupResumeCard()
+    }
+
+    private fun setupIncomesCard() {
+        incomesVisible = true
+
+        binding.incomeCard.visibility = View.VISIBLE
+
+        binding.incomeCardTitle.text = resources.getText(R.string.qty_incomes).toString().replace(
+            PLACEHOLDER, incomes.size.toString()
+        )
+        binding.incomeCardPending.text =
+            resources.getText(R.string.card_pending).toString().replace(
+                PLACEHOLDER, incomes.filter { !it.recebido }.size.toString()
+            )
+        binding.incomeCardNotPending.text =
+            resources.getText(R.string.card_received).toString().replace(
+                PLACEHOLDER, incomes.filter { it.recebido }.size.toString()
+            )
+
+        setupResumeCard()
+    }
+
+    private fun setupResumeCard() {
+        if (expensesVisible && incomesVisible) {
+            val expensesValue = expenses.fold(0L) { acc, item ->
+                var res = acc
+
+                if (!item.pago) res += item.valor
+
+                res
+            }
+            val incomesValue = incomes.fold(0L) { acc, item ->
+                var res = acc
+
+                if (item.recebido) res += item.valor
+
+                res
+            }
+            val result = incomesValue - expensesValue
+
+            binding.cardResume.visibility = View.VISIBLE
+
+            binding.cardResumeTitle.text =
+                resources.getText(R.string.txt_balance).toString().replace(
+                    PLACEHOLDER, result.byHundred().toCurrency()
+                )
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false)
+    private fun setupVM() {
+        vmIncomes = ViewModelProvider(this).get(IncomesViewModel::class.java)
+
+        vmExpenses = ViewModelProvider(this).get(ExpensesViewModel::class.java)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private fun setupHour() {
+        hour = Calendar.getInstance().toInstant().atZone(ZoneId.systemDefault()).hour
+    }
+
+    private fun setupViews() {
+        val textId = when (hour) {
+            in 6..11 -> R.string.msg_morning
+            in 12..18 -> R.string.msg_afternoon
+            else -> R.string.msg_night
+        }
+
+        binding.homeSubtitle.text =
+            resources.getText(textId).toString().replace(PLACEHOLDER, userName.split(" ")[0])
     }
 }

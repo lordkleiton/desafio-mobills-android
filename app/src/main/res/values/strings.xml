@@ -19,4 +19,13 @@
     <string name="edit_income">Editar receita</string>
     <string name="text_date">Selecionar data</string>
     <string name="text_welcome">Seja bem vindo</string>
+    <string name="msg_morning">Olá |, tenha um bom dia</string>
+    <string name="msg_afternoon">Olá |, tenha uma boa tarde</string>
+    <string name="msg_night">Olá |, tenha uma boa noite</string>
+    <string name="qty_expenses">Você possui | despesas</string>
+    <string name="qty_incomes">Você possui | receitas</string>
+    <string name="txt_balance">Seu balanço atual é de |</string>
+    <string name="card_paid">| pago</string>
+    <string name="card_pending">| pendente</string>
+    <string name="card_received">| recebido</string>
 </resources>
